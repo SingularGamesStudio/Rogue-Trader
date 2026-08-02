@@ -96,21 +96,24 @@
   }
 
   function assetUrl(value) {
-    const path = String(value ?? "")
-      .trim()
-      .replace(/^["']|["']$/g, "")
+  const path = String(value ?? "")
+    .trim()
+    .replace(/^["']|["']$/g, "")
 
-    if (isExternalUrl(path)) return path
-
-    const relative = path.replace(/^\/+/, "")
-
-    // Only marker JSON is lowercased.
-    const emittedPath = /\.markers\.json$/i.test(relative)
-      ? relative.toLowerCase()
-      : relative
-
-    return `${basePath}/${emittedPath}`.replace(/\/+/g, "/")
+  if (/^(https?:)?\/\//i.test(path)) {
+    return path
   }
+
+  const relative = path.replace(/^\/+/, "")
+
+  // Quartz-normalized content assets in img/ are lowercase.
+  // Do NOT lowercase generated Quartz paths such as static/contentIndex.json.
+  const emittedPath = relative.startsWith("img/")
+    ? relative.toLowerCase()
+    : relative
+
+  return `${basePath}/${emittedPath}`.replace(/\/+/g, "/")
+}
 
   function quartzNoteUrl(value) {
     let link = String(value ?? "")
