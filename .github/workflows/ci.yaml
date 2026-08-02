@@ -34,9 +34,17 @@ jobs:
         working-directory: source
         run: npm ci
 
+      - name: Diagnose Quartz CLI
+      working-directory: source
+      run: |
+        node --version
+        npm --version
+        ls -l node_modules/.bin/quartz
+        npx --no-install quartz --version
+
       - name: Install Quartz plugins
         working-directory: source
-        run: npx quartz plugin install
+        run: npx --yes quartz plugin install
 
       - name: Build Quartz
         working-directory: source
