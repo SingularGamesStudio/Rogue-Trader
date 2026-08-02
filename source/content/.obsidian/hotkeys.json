@@ -1,0 +1,11 @@
+{
+  "zoom-map:insert-new-map": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "M"
+    }
+  ]
+}

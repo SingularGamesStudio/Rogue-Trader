@@ -1,0 +1,65 @@
+{
+  "size": {
+    "w": 8192,
+    "h": 5461
+  },
+  "layers": [
+    {
+      "id": "default",
+      "name": "Default",
+      "visible": true,
+      "locked": false
+    }
+  ],
+  "markers": [],
+  "bases": [
+    {
+      "path": "img/Koronus.jpg"
+    }
+  ],
+  "overlays": [],
+  "activeBase": "img/Koronus.jpg",
+  "measurement": {
+    "scales": {},
+    "customUnitPxPerUnit": {},
+    "travelTimePresetIds": [],
+    "travelDaysEnabled": false,
+    "displayUnit": "km"
+  },
+  "pinSizeOverrides": {},
+  "grids": [],
+  "panClamp": true,
+  "drawLayers": [],
+  "drawings": [],
+  "secondScreen": {
+    "showGrids": true
+  },
+  "textLayers": [],
+  "deleted": [
+    {
+      "id": "undo_5x6qav",
+      "label": "Delete marker",
+      "createdAt": "2026-08-02T10:37:00.547Z",
+      "payload": {
+        "kind": "marker",
+        "marker": {
+          "id": "marker_2h4tvp",
+          "x": 0.7356869141182087,
+          "y": 0.4529073092359236,
+          "layer": "default",
+          "link": "",
+          "iconKey": "pinRed",
+          "tooltip": "",
+          "anchorSpace": "viewport",
+          "hudX": 513.9999389648438,
+          "hudY": 216.79164123535156,
+          "hudModeX": "right",
+          "hudModeY": "top",
+          "hudLastWidth": 698.6666870117188,
+          "hudLastHeight": 478.66668701171875
+        },
+        "index": 0
+      }
+    }
+  ]
+}
