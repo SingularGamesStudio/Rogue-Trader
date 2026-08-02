@@ -1,177 +1,119 @@
 ;(() => {
   const basePath = location.hostname === "localhost" ? "" : "/Rogue-Trader"
 
-  const css = `
-    .zoom-map {
-      position: relative;
-      width: 100%;
-      min-height: 240px;
-      overflow: hidden;
-      background: #111;
-      cursor: grab;
-      touch-action: none;
-      user-select: none;
-    }
+  const styleId = "zoom-map-styles"
 
-    .zoom-map.is-dragging {
-      cursor: grabbing;
-    }
-
-    .zoom-map-scene {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      transform-origin: top left;
-      will-change: transform;
-    }
-
-    .zoom-map-image {
-      display: block;
-      width: 100%;
-      height: auto;
-      pointer-events: none;
-    }
-
-    .zoom-map-pin {
-      position: absolute;
-      z-index: 2;
-      width: 22px;
-      height: 22px;
-      transform: translate(-50%, -100%) rotate(-45deg);
-      border: 2px solid #fff;
-      border-radius: 50% 50% 50% 0;
-      background: #d63636;
-      box-shadow: 0 2px 6px rgb(0 0 0 / 75%);
-      cursor: pointer;
-    }
-
-    .zoom-map-pin::after {
-      position: absolute;
-      inset: 5px;
-      border-radius: 50%;
-      background: #fff;
-      content: "";
-    }
-
-    .zoom-map-tooltip {
-      position: absolute;
-      bottom: calc(100% + 14px);
-      left: 50%;
-      z-index: 3;
-      width: max-content;
-      max-width: 280px;
-      padding: 6px 9px;
-      transform: translateX(-50%) rotate(45deg);
-      border-radius: 4px;
-      background: rgb(20 20 24 / 94%);
-      color: white;
-      font-family: system-ui, sans-serif;
-      font-size: 0.8rem;
-      font-weight: normal;
-      line-height: 1.25;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 120ms ease;
-    }
-
-    .zoom-map-pin:hover .zoom-map-tooltip,
-    .zoom-map-tooltip.is-always-on {
-      opacity: 1;
-    }
-
-    .zoom-map-error {
-      padding: 1rem;
-      border: 1px solid #9f3030;
-      color: #ff9f9f;
-      white-space: pre-wrap;
-    }
-  `
-
-  if (!document.getElementById("zoom-map-styles")) {
+  if (!document.getElementById(styleId)) {
     const style = document.createElement("style")
-    style.id = "zoom-map-styles"
-    style.textContent = css
+    style.id = styleId
+    style.textContent = `
+      .zoom-map {
+        position: relative;
+        width: 100%;
+        min-height: 240px;
+        overflow: hidden;
+        background: #111;
+        cursor: grab;
+        touch-action: none;
+        user-select: none;
+      }
+
+      .zoom-map.is-dragging {
+        cursor: grabbing;
+      }
+
+      .zoom-map-scene {
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: 100%;
+        transform-origin: top left;
+        will-change: transform;
+      }
+
+      .zoom-map-image {
+        display: block;
+        width: 100%;
+        height: auto;
+        pointer-events: none;
+      }
+
+      .zoom-map-pin {
+        position: absolute;
+        z-index: 10;
+        display: block;
+        width: 24px;
+        height: 24px;
+        box-sizing: border-box;
+        transform: translate(-50%, -100%) rotate(-45deg);
+        border: 2px solid #fff;
+        border-radius: 50% 50% 50% 0;
+        background: #d63636;
+        box-shadow: 0 2px 6px rgb(0 0 0 / 75%);
+        cursor: pointer;
+      }
+
+      .zoom-map-pin-dot {
+        position: absolute;
+        inset: 5px;
+        border-radius: 50%;
+        background: #fff;
+        pointer-events: none;
+      }
+
+      .zoom-map-tooltip {
+        position: absolute;
+        bottom: calc(100% + 14px);
+        left: 50%;
+        z-index: 11;
+        width: max-content;
+        max-width: 280px;
+        padding: 6px 9px;
+        transform: translateX(-50%) rotate(45deg);
+        border-radius: 4px;
+        background: rgb(20 20 24 / 94%);
+        color: #fff;
+        font-family: system-ui, sans-serif;
+        font-size: 0.8rem;
+        font-weight: normal;
+        line-height: 1.25;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 120ms ease;
+      }
+
+      .zoom-map-error {
+        padding: 1rem;
+        border: 1px solid #9f3030;
+        color: #ff9f9f;
+        white-space: pre-wrap;
+      }
+    `
     document.head.appendChild(style)
   }
 
-  function assetUrl(path) {
-  path = path.trim().replace(/^["']|["']$/g, "")
-
-  if (/^(https?:)?\/\//.test(path)) {
-    return path
+  function isExternalUrl(value) {
+    return /^(https?:)?\/\//i.test(value)
   }
 
-  const relativePath = path.replace(/^\/+/, "")
+  function assetUrl(value) {
+    const path = String(value ?? "")
+      .trim()
+      .replace(/^["']|["']$/g, "")
 
-  const emittedPath = relativePath.endsWith(".markers.json")
-    ? relativePath.toLowerCase()
-    : relativePath
+    if (isExternalUrl(path)) return path
 
-  return `${basePath}/${emittedPath}`.replace(/\/+/g, "/")
-}
+    const relative = path.replace(/^\/+/, "")
 
-  let quartzPagesPromise = null
+    // Only marker JSON is lowercased.
+    const emittedPath = /\.markers\.json$/i.test(relative)
+      ? relative.toLowerCase()
+      : relative
 
-function quartzPages() {
-  if (!quartzPagesPromise) {
-    quartzPagesPromise = fetch(assetUrl("static/contentIndex.json"))
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Cannot load content index: ${response.status}`)
-        }
-
-        return response.json()
-      })
+    return `${basePath}/${emittedPath}`.replace(/\/+/g, "/")
   }
 
-  return quartzPagesPromise
-}
-
-async function resolveNoteUrl(link) {
-  const requested = (link ?? "")
-    .trim()
-    .replace(/^\[\[/, "")
-    .replace(/\]\]$/, "")
-    .split("|")[0]
-    .split("#")[0]
-    .trim()
-
-  if (!requested) return null
-  if (/^(https?:)?\/\//.test(requested)) return requested
-
-  const requestedLower = requested
-    .replace(/\\/g, "/")
-    .replace(/\.md$/i, "")
-    .toLowerCase()
-
-  const pages = await quartzPages()
-
-  for (const [slug, page] of Object.entries(pages)) {
-    const title = String(page.title ?? "").toLowerCase()
-
-    const aliases = (page.aliases ?? [])
-      .map((alias) => String(alias).toLowerCase())
-
-    const slugLower = slug.toLowerCase()
-    const filename = slugLower.split("/").at(-1)
-
-    if (
-      title === requestedLower ||
-      aliases.includes(requestedLower) ||
-      slugLower === requestedLower ||
-      filename === requestedLower
-    ) {
-      return assetUrl(slug)
-    }
-  }
-
-  console.warn(`Zoom map: no Quartz page found for "${requested}"`)
-  return null
-}
-
-  function noteUrl(link) {
-    link = (link ?? "")
+  function quartzNoteUrl(value) {
+    let link = String(value ?? "")
       .trim()
       .replace(/^\[\[/, "")
       .replace(/\]\]$/, "")
@@ -180,7 +122,7 @@ async function resolveNoteUrl(link) {
       .trim()
 
     if (!link) return null
-    if (/^(https?:)?\/\//.test(link)) return link
+    if (isExternalUrl(link)) return link
 
     const slug = link
       .replace(/\\/g, "/")
@@ -199,7 +141,7 @@ async function resolveNoteUrl(link) {
   }
 
   function readValue(text, key) {
-    const match = text.match(
+    const match = String(text).match(
       new RegExp(`^\\s*${key}\\s*:\\s*(.+?)\\s*$`, "mi"),
     )
 
@@ -207,86 +149,54 @@ async function resolveNoteUrl(link) {
   }
 
   function readImagePath(text) {
-    const directImage = readValue(text, "image")
-    if (directImage) return directImage
+    const image = readValue(text, "image")
+    if (image) return image
 
-    const match = text.match(
+    const match = String(text).match(
       /^\s*imageBases\s*:\s*[\r\n]+\s*-\s*path\s*:\s*(.+?)\s*$/mi,
     )
 
     return match?.[1]?.trim().replace(/^["']|["']$/g, "")
   }
 
-  async function makeMarker(marker) {
+  function makeMarker(marker) {
     const pin = document.createElement("a")
     pin.className = "zoom-map-pin"
-    pin.style.position = "absolute"
-    pin.style.zIndex = "9999"
-    pin.style.display = "block"
-    pin.style.visibility = "visible"
-    pin.style.opacity = "1"
-    pin.style.width = "24px"
-    pin.style.height = "24px"
-    pin.style.boxSizing = "border-box"
-    pin.style.border = "2px solid white"
-    pin.style.borderRadius = "50% 50% 50% 0"
-    pin.style.background = "#d63636"
-    pin.style.boxShadow = "0 2px 6px rgb(0 0 0 / 75%)"
-    pin.style.transform = "translate(-50%, -100%) rotate(-45deg)"
-    pin.style.cursor = "pointer"
+    pin.style.left = `${Number(marker.x) * 100}%`
+    pin.style.top = `${Number(marker.y) * 100}%`
 
-    pin.style.left = `${marker.x * 100}%`
-    pin.style.top = `${marker.y * 100}%`
+    const href = quartzNoteUrl(marker.link)
+    pin.href = href ?? "#"
+    pin.setAttribute("aria-label", marker.tooltip || marker.link || "Map marker")
 
-    const dot = document.createElement("span")
-    dot.style.position = "absolute"
-    dot.style.inset = "5px"
-    dot.style.borderRadius = "50%"
-    dot.style.background = "white"
-    dot.style.pointerEvents = "none"
-    pin.appendChild(dot)
-
-    const href = await resolveNoteUrl(marker.link)
-
-    if (href) {
-      pin.href = href
-    } else {
+    if (!href) {
       pin.addEventListener("click", (event) => event.preventDefault())
     }
 
-    if (marker.tooltip?.trim()) {
+    const dot = document.createElement("span")
+    dot.className = "zoom-map-pin-dot"
+    pin.appendChild(dot)
+
+    const text = String(marker.tooltip ?? "").trim()
+
+    if (text) {
       const tooltip = document.createElement("span")
-
       tooltip.className = "zoom-map-tooltip"
-      tooltip.textContent = marker.tooltip.trim()
-
-      tooltip.style.position = "absolute"
-      tooltip.style.bottom = "calc(100% + 14px)"
-      tooltip.style.left = "50%"
-      tooltip.style.zIndex = "10000"
-      tooltip.style.width = "max-content"
-      tooltip.style.maxWidth = "280px"
-      tooltip.style.padding = "6px 9px"
-      tooltip.style.transform = "translateX(-50%) rotate(45deg)"
-      tooltip.style.borderRadius = "4px"
-      tooltip.style.background = "rgb(20 20 24 / 94%)"
-      tooltip.style.color = "white"
-      tooltip.style.fontFamily = "system-ui, sans-serif"
-      tooltip.style.fontSize = "0.8rem"
-      tooltip.style.fontWeight = "normal"
-      tooltip.style.lineHeight = "1.25"
-      tooltip.style.pointerEvents = "none"
-      tooltip.style.opacity = marker.tooltipAlwaysOn ? "1" : "0"
-
-      pin.addEventListener("mouseenter", () => {
-        tooltip.style.opacity = "1"
-      })
-
-      pin.addEventListener("mouseleave", () => {
-        tooltip.style.opacity = marker.tooltipAlwaysOn ? "1" : "0"
-      })
-
+      tooltip.textContent = text
       pin.appendChild(tooltip)
+
+      const alwaysVisible = marker.tooltipAlwaysOn === true
+
+      const setTooltipVisible = (visible) => {
+        tooltip.style.opacity = visible ? "1" : "0"
+      }
+
+      setTooltipVisible(alwaysVisible)
+
+      pin.addEventListener("mouseenter", () => setTooltipVisible(true))
+      pin.addEventListener("mouseleave", () => setTooltipVisible(alwaysVisible))
+      pin.addEventListener("focus", () => setTooltipVisible(true))
+      pin.addEventListener("blur", () => setTooltipVisible(alwaysVisible))
     }
 
     return pin
@@ -294,16 +204,17 @@ async function resolveNoteUrl(link) {
 
   function enablePanAndZoom(map, scene, minZoom, maxZoom) {
     let scale = 1
-    let x = 0
-    let y = 0
+    let translateX = 0
+    let translateY = 0
     let dragging = false
-    let startX = 0
-    let startY = 0
-    let initialX = 0
-    let initialY = 0
+    let pointerStartX = 0
+    let pointerStartY = 0
+    let startTranslateX = 0
+    let startTranslateY = 0
 
-    function applyTransform() {
-      scene.style.transform = `translate(${x}px, ${y}px) scale(${scale})`
+    const apply = () => {
+      scene.style.transform =
+        `translate(${translateX}px, ${translateY}px) scale(${scale})`
     }
 
     map.addEventListener(
@@ -311,19 +222,20 @@ async function resolveNoteUrl(link) {
       (event) => {
         event.preventDefault()
 
-        const rect = map.getBoundingClientRect()
-        const pointerX = event.clientX - rect.left
-        const pointerY = event.clientY - rect.top
+        const bounds = map.getBoundingClientRect()
+        const mouseX = event.clientX - bounds.left
+        const mouseY = event.clientY - bounds.top
+        const multiplier = event.deltaY < 0 ? 1.15 : 1 / 1.15
+        const nextScale = Math.min(
+          maxZoom,
+          Math.max(minZoom, scale * multiplier),
+        )
 
-        const zoomFactor = event.deltaY < 0 ? 1.15 : 1 / 1.15
-        const nextScale = Math.min(maxZoom, Math.max(minZoom, scale * zoomFactor))
-        const factor = nextScale / scale
-
-        x = pointerX - (pointerX - x) * factor
-        y = pointerY - (pointerY - y) * factor
+        const ratio = nextScale / scale
+        translateX = mouseX - (mouseX - translateX) * ratio
+        translateY = mouseY - (mouseY - translateY) * ratio
         scale = nextScale
-
-        applyTransform()
+        apply()
       },
       { passive: false },
     )
@@ -332,10 +244,10 @@ async function resolveNoteUrl(link) {
       if (event.target.closest(".zoom-map-pin")) return
 
       dragging = true
-      startX = event.clientX
-      startY = event.clientY
-      initialX = x
-      initialY = y
+      pointerStartX = event.clientX
+      pointerStartY = event.clientY
+      startTranslateX = translateX
+      startTranslateY = translateY
 
       map.classList.add("is-dragging")
       map.setPointerCapture(event.pointerId)
@@ -344,12 +256,12 @@ async function resolveNoteUrl(link) {
     map.addEventListener("pointermove", (event) => {
       if (!dragging) return
 
-      x = initialX + event.clientX - startX
-      y = initialY + event.clientY - startY
-      applyTransform()
+      translateX = startTranslateX + event.clientX - pointerStartX
+      translateY = startTranslateY + event.clientY - pointerStartY
+      apply()
     })
 
-    function stopDragging() {
+    const stopDragging = () => {
       dragging = false
       map.classList.remove("is-dragging")
     }
@@ -358,21 +270,19 @@ async function resolveNoteUrl(link) {
     map.addEventListener("pointercancel", stopDragging)
 
     map.addEventListener("dblclick", (event) => {
-      const rect = map.getBoundingClientRect()
-      const pointerX = event.clientX - rect.left
-      const pointerY = event.clientY - rect.top
-
+      const bounds = map.getBoundingClientRect()
+      const mouseX = event.clientX - bounds.left
+      const mouseY = event.clientY - bounds.top
       const nextScale = Math.min(maxZoom, scale * 1.5)
-      const factor = nextScale / scale
+      const ratio = nextScale / scale
 
-      x = pointerX - (pointerX - x) * factor
-      y = pointerY - (pointerY - y) * factor
+      translateX = mouseX - (mouseX - translateX) * ratio
+      translateY = mouseY - (mouseY - translateY) * ratio
       scale = nextScale
-
-      applyTransform()
+      apply()
     })
 
-    applyTransform()
+    apply()
   }
 
   async function renderMap(code, imagePath, markerPath) {
@@ -380,9 +290,9 @@ async function resolveNoteUrl(link) {
     if (!pre) return
 
     const source = code.textContent
-    const height = readValue(source, "height") ?? "480px"
-    const minZoom = Number.parseFloat(readValue(source, "minZoom") ?? "0.05")
-    const maxZoom = Number.parseFloat(readValue(source, "maxZoom") ?? "8")
+    const height = readValue(source, "height") || "480px"
+    const minZoom = Number.parseFloat(readValue(source, "minZoom") || "0.05")
+    const maxZoom = Number.parseFloat(readValue(source, "maxZoom") || "8")
 
     const map = document.createElement("div")
     map.className = "zoom-map"
@@ -396,7 +306,7 @@ async function resolveNoteUrl(link) {
       const response = await fetch(assetUrl(markerPath))
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${assetUrl(markerPath)}`)
+        throw new Error(`HTTP ${response.status}`)
       }
 
       const data = await response.json()
@@ -407,28 +317,33 @@ async function resolveNoteUrl(link) {
           .map((layer) => layer.id),
       )
 
-      const actualImage =
+      const imagePathFromData =
         data.activeBase ??
         data.bases?.[0]?.path ??
         imagePath
 
       const image = document.createElement("img")
       image.className = "zoom-map-image"
-      image.src = assetUrl(actualImage)
+      image.src = assetUrl(imagePathFromData)
       image.alt = ""
       image.draggable = false
       scene.appendChild(image)
 
       for (const marker of data.markers ?? []) {
-        if (marker.type !== "pin") continue
-        if (!Number.isFinite(marker.x) || !Number.isFinite(marker.y)) continue
+        if (marker.type && marker.type !== "pin") continue
+        if (!Number.isFinite(Number(marker.x))) continue
+        if (!Number.isFinite(Number(marker.y))) continue
         if (visibleLayers.size && !visibleLayers.has(marker.layer)) continue
 
-        scene.appendChild(await makeMarker(marker))
+        scene.appendChild(makeMarker(marker))
       }
 
       image.addEventListener("load", () => {
         enablePanAndZoom(map, scene, minZoom, maxZoom)
+      })
+
+      image.addEventListener("error", () => {
+        console.error("Zoom map image failed to load:", image.src)
       })
 
       pre.replaceWith(map)
@@ -438,42 +353,26 @@ async function resolveNoteUrl(link) {
       const message = document.createElement("div")
       message.className = "zoom-map-error"
       message.textContent =
-        `Zoom map failed to load JSON:\n${assetUrl(markerPath)}`
+        `Zoom map failed to load marker JSON:\n${assetUrl(markerPath)}`
 
       pre.replaceWith(message)
     }
   }
 
   function initializeZoomMaps() {
-    for (const code of document.querySelectorAll("pre code")) {
-      if (code.dataset.zoomMapLoaded === "true") continue
+    document.querySelectorAll("pre code").forEach((code) => {
+      if (code.dataset.zoomMapLoaded === "true") return
 
       const source = code.textContent
       const imagePath = readImagePath(source)
       const markerPath = readValue(source, "markers")
 
-      if (!imagePath || !markerPath) continue
+      if (!imagePath || !markerPath) return
 
       code.dataset.zoomMapLoaded = "true"
       renderMap(code, imagePath, markerPath)
-    }
+    })
   }
-
-  document.addEventListener("nav", () => {
-  for (const pin of document.querySelectorAll(".zoom-map-pin")) {
-    pin.style.cssText += `
-      position: absolute !important;
-      z-index: 9999 !important;
-      display: block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      width: 28px !important;
-      height: 28px !important;
-      background: red !important;
-      border: 3px solid white !important;
-    `
-  }
-})
 
   document.addEventListener("nav", initializeZoomMaps)
   initializeZoomMaps()
