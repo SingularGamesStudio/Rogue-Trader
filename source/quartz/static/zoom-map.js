@@ -102,9 +102,8 @@
       return path
     }
 
-    return `${basePath}/${path.replace(/^\/+/, "").toLowerCase()}`
-      .replace(/\/+/g, "/")
-}
+    return `${basePath}/${path.replace(/^\/+/, "")}`.replace(/\/+/g, "/")
+  }
 
   let quartzPagesPromise = null
 
