@@ -1,1 +1,2 @@
-head of [[Tark Dynasty]]
+in [[The party.canvas]]
+head of [[Slay Dynasty]]

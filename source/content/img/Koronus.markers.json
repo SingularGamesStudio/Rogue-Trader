@@ -11,7 +11,19 @@
       "locked": false
     }
   ],
-  "markers": [],
+  "markers": [
+    {
+      "type": "pin",
+      "id": "marker_fum668",
+      "x": 0.47996178896483827,
+      "y": 0.30157492323089413,
+      "layer": "default",
+      "link": "Cornelius",
+      "iconKey": "pinRed",
+      "tooltip": "text",
+      "tooltipAlwaysOn": true
+    }
+  ],
   "bases": [
     {
       "path": "img/Koronus.jpg"
