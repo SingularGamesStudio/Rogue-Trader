@@ -105,6 +105,12 @@ export function pageResources(
     moduleType: "module",
     contentType: "external",
   })
+  resources.js.push({
+      src: "static/zoom-map.js",
+      loadTime: "afterDOMReady",
+      contentType: "external",
+      spaPreserve: true,
+    })
 
   return resources
 }
