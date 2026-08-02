@@ -41,6 +41,7 @@ export default (() => {
 
     return (
       <head>
+        <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
         <title>{title}</title>
         <meta charSet="utf-8" />
         {coreStylesheet && <link rel="preload" href={coreStylesheet} as="style" />}

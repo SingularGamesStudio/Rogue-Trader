@@ -1,0 +1,16 @@
+| Roll | Critical hit        | Effect                                                                                                                                                                                          |
+| ---- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | Holed               | Attacker selects 1 known non-Bridge, non-Drive Component; it becomes **Depressurised**                                                                                                          |
+| 2    | Internal Damage     | Attacker selects 1 known non-Bridge, non-Drive Component; it becomes **Damaged**                                                                                                                |
+| 3    | Sensors Damaged     | All shooting tests: -30; sensory tests beyond immediate engagement range automatically fail; repairs must be performed outside the hull                                                         |
+| 4    | Thrusters Damaged   | Roll 1d10: 1–7: Manoeuvrability -20; 8–10: ship cannot turn; repairable                                                                                                                         |
+| 5    | Fire!               | Attacker selects 1 known non-Bridge, non-Drive Component; it is **On Fire**                                                                                                                     |
+| 6    | Engines Crippled    | Roll 1d10: 1–7: Speed halved; 8–10: Speed becomes 1; repairable                                                                                                                                 |
+| 7    | Surly Techsprites   | Roll 1d10 for every Component: 4+: Component becomes **Unpowered**; each requires separate repair. Morale: -1d5                                                                                 |
+| 8    | Decapitation        | Everyone on Bridge makes Dodge Reaction or takes 2d10 Explosive damage; damage result 12+: Bridge **Depressurised**; 16+: Bridge **Damaged**                                                    |
+| 9–10 | Hull Breach         | Select 1d5 known non-Bridge Components; roll 1d10 for each: 1–7: **Damaged** and **Depressurised**; 8–10: **Destroyed**, crew inside killed. Current Crew Population and Morale are each halved |
+| 11   | Catastrophic Damage | Roll 1d10: 1–7: ship is **Hulked**; 8–9: **Plasma Drive Explosion**; 10: **Warp Drive Explosion** (or Plasma Drive Explosion if no warp drive)                                                  |
+
+Hulked - per component, 1-2 unpowered, 3-7 damaged, 8-10 destroyed
+Plasma Drive Explosion - `1d10 VU`, (-20) Pilot (Space Craft) + Manoeuvrability, `1d5` macrobattery hits 1d10+4 on fail
+Warp Drive Explosion - `2d10 VU`, (-20) Pilot (Space Craft) + Manoeuvrability, `1d10` direct damage on fail, (+0) Pilot (Space Craft) + Manoeuvrability, sucked into warp on fail
