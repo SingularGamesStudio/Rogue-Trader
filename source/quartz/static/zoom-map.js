@@ -96,14 +96,20 @@
   }
 
   function assetUrl(path) {
-    path = path.trim().replace(/^["']|["']$/g, "")
+  path = path.trim().replace(/^["']|["']$/g, "")
 
-    if (/^(https?:)?\/\//.test(path)) {
-      return path
-    }
-
-    return `${basePath}/${path.replace(/^\/+/, "")}`.replace(/\/+/g, "/")
+  if (/^(https?:)?\/\//.test(path)) {
+    return path
   }
+
+  const relativePath = path.replace(/^\/+/, "")
+
+  const emittedPath = relativePath.endsWith(".markers.json")
+    ? relativePath.toLowerCase()
+    : relativePath
+
+  return `${basePath}/${emittedPath}`.replace(/\/+/g, "/")
+}
 
   let quartzPagesPromise = null
 
