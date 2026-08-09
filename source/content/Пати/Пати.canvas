@@ -1,15 +1,15 @@
 {
 	"nodes":[
-		{"id":"f150e5aeffd146c9","type":"file","file":"Voidship/Party/Теодора.md","x":40,"y":-83,"width":400,"height":400},
-		{"id":"b202a6863404b473","type":"file","file":"Voidship/Party/Слей Тарк.md","x":-600,"y":-720,"width":400,"height":357},
+		{"id":"f150e5aeffd146c9","type":"file","file":"Пати/Теодора.md","x":40,"y":-83,"width":400,"height":400},
+		{"id":"b202a6863404b473","type":"file","file":"Пати/Слей Тарк.md","x":-600,"y":-720,"width":400,"height":357},
 		{"id":"85bb790996bed270","type":"file","file":"img/oar2.jpg","x":40,"y":-794,"width":400,"height":711},
 		{"id":"bcb7f583751c8cf0","type":"file","file":"img/b829ef10b9dc198632c5bb1e195a5c4a.jpg","x":-600,"y":-1389,"width":400,"height":669},
-		{"id":"3a70a5008c56a3b1","type":"file","file":"Voidship/Party/Корнелий.md","x":-200,"y":1143,"width":400,"height":400},
+		{"id":"3a70a5008c56a3b1","type":"file","file":"Пати/Корнелий.md","x":-200,"y":1143,"width":400,"height":400},
 		{"id":"e59804e0c4e6c59c","type":"file","file":"img/i.webp","x":-200,"y":618,"width":400,"height":533},
-		{"id":"6f02a75a9bd34e2c","type":"file","file":"Voidship/Party/Ясос Биба.md","x":-1160,"y":1143,"width":400,"height":400},
+		{"id":"6f02a75a9bd34e2c","type":"file","file":"Пати/Ясос Биба.md","x":-1160,"y":1143,"width":400,"height":400},
 		{"id":"28d8d5faf5479418","type":"file","file":"img/Warhammer-40000-Ecclesiarchy-priest-Ecclesiarchy-Imperium-3729545.jpeg","x":-1160,"y":586,"width":396,"height":557},
 		{"id":"e8c96db7667eaf2d","type":"file","file":"img/71f697965780b08ead8aaec14e8332b0.jpg","x":-1362,"y":-724,"width":400,"height":641},
-		{"id":"4725e3ad8eb7a67e","type":"file","file":"Voidship/Party/Дональд.md","x":-1362,"y":-83,"width":400,"height":400}
+		{"id":"4725e3ad8eb7a67e","type":"file","file":"Пати/Дональд.md","x":-1362,"y":-83,"width":400,"height":400}
 	],
 	"edges":[]
 }

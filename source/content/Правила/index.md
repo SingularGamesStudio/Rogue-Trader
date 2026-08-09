@@ -11,24 +11,7 @@
 [Crits - Rending](https://apps.ajott.io/quickref/crit.html#rendingCrit)
 [[Voidship crits]]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 Legal:
 Unofficial, non-commercial fan reference.

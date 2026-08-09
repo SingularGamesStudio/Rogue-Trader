@@ -1,3 +1,8 @@
+---
+title: Карта пространства Коронус
+---
+карта
+
 ```zoommap
 imageBases:
   - path: img/Koronus.jpg

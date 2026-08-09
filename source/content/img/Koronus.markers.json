@@ -14,14 +14,83 @@
   "markers": [
     {
       "type": "pin",
-      "id": "marker_fum668",
-      "x": 0.47996178896483827,
-      "y": 0.30157492323089413,
+      "id": "marker_1acgmm",
+      "x": 0.3540075067998433,
+      "y": 0.15944285160629174,
       "layer": "default",
-      "link": "Корнелий",
+      "link": "Источник сигнала Ю'Ват",
       "iconKey": "pinRed",
-      "tooltip": "text",
-      "tooltipAlwaysOn": true
+      "tooltip": ""
+    },
+    {
+      "type": "pin",
+      "id": "marker_iirknp",
+      "x": 0.4761447913440736,
+      "y": 0.4729161738450457,
+      "layer": "default",
+      "link": "SR-651",
+      "iconKey": "pinRed",
+      "tooltip": ""
+    },
+    {
+      "type": "pin",
+      "id": "marker_m1gcii",
+      "x": 0.49045776802651886,
+      "y": 0.5387597980007053,
+      "layer": "default",
+      "link": "Глубины Каина",
+      "iconKey": "pinRed",
+      "tooltip": ""
+    },
+    {
+      "type": "pin",
+      "id": "marker_pqkz8f",
+      "x": 0.47185089833934,
+      "y": 0.5981623205548373,
+      "layer": "default",
+      "link": "Лакристи",
+      "iconKey": "pinRed",
+      "tooltip": ""
+    },
+    {
+      "type": "pin",
+      "id": "marker_5th81c",
+      "x": 0.4370227715580257,
+      "y": 0.6597119206585497,
+      "layer": "default",
+      "link": "Нтарис",
+      "iconKey": "pinRed",
+      "tooltip": ""
+    },
+    {
+      "type": "pin",
+      "id": "marker_ou6imp",
+      "x": 0.3630722755527562,
+      "y": 0.4779261088255426,
+      "layer": "default",
+      "link": "Кобальт",
+      "iconKey": "pinRed",
+      "tooltip": ""
+    },
+    {
+      "type": "pin",
+      "id": "marker_ss3fn4",
+      "x": 0.28816781406059516,
+      "y": 0.6489765329106472,
+      "layer": "default",
+      "link": "Шествие Проклятых",
+      "iconKey": "pinRed",
+      "tooltip": ""
+    },
+    {
+      "type": "pin",
+      "id": "marker_dur53c",
+      "x": 0.6851142509077741,
+      "y": 0.43856293305175753,
+      "layer": "default",
+      "link": "Футфолл",
+      "iconKey": "pinRed",
+      "tooltip": ""
     }
   ],
   "bases": [
@@ -48,6 +117,26 @@
   },
   "textLayers": [],
   "deleted": [
+    {
+      "id": "undo_3ibe6d",
+      "label": "Delete pin",
+      "createdAt": "2026-08-09T11:53:46.727Z",
+      "payload": {
+        "kind": "marker",
+        "marker": {
+          "type": "pin",
+          "id": "marker_fum668",
+          "x": 0.47996178896483827,
+          "y": 0.30157492323089413,
+          "layer": "default",
+          "link": "Корнелий",
+          "iconKey": "pinRed",
+          "tooltip": "text",
+          "tooltipAlwaysOn": true
+        },
+        "index": 0
+      }
+    },
     {
       "id": "undo_5x6qav",
       "label": "Delete marker",

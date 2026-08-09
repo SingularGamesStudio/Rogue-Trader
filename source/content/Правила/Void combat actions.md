@@ -1,3 +1,4 @@
+## Movement
 
 | Action                 | Test                                                                                          | Effect                                                                                                                                          |
 | ---------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -8,6 +9,7 @@
 | Come to New Heading    | Difficult (-10) Pilot (Space Craft) + Manoeuvrability                                         | Turn at half Speed and again at full Speed; -20 BS to all ship shooting this turn                                                               |
 | Disengage              | Opposed Challenging (+0) Pilot (Space Craft) + Manoeuvrability vs. enemy Detection + Scrutiny | Cannot use within 8 VU of enemy; opponents within 20 VU oppose; must beat every enemy; cannot fire this turn; success leaves combat permanently |
 | Evasive Manoeuvres     | Difficult (-10) Pilot (Space Craft) + Manoeuvrability                                         | -10 to all attacks against ship per DoS until next turn; same penalty to own shooting                                                           |
+## Attacks
 
 | Action              | Requirement / Test                                                                             | Effect                                                                                                                                                    |
 | ------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -18,6 +20,7 @@
 | Boarding victory    | Per DoS on opposed Command                                                                     | Per DoS: inflict either 1d5 Crew Population + 1d5 Morale damage, or 1 Hull Integrity damage                                                               |
 | Boarding morale     | d100 vs. current Morale after losing Command                                                   | Roll above Morale: crew surrenders                                                                                                                        |
 | Hit and Run         | Challenging (+0) Pilot (Space Craft), then opposed Ordinary (+10) Command                      | Target within 5 VU; success: roll Critical Hit twice and choose one, plus 1 Hull Integrity damage per DoS; fail Pilot by 4+ DoF: boarding craft shot down |
+## Other
 
 | Action                     | Test                                                                      | Effect                                                                                                                                                                     |
 | -------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -34,3 +37,22 @@
 | Prepare to Repel Boarders! | Challenging (+0) Command                                                  | +10 opposed Command against boarding parties; +5 per DoS; character remains occupied to maintain bonus                                                                     |
 | Put Your Backs Into It!    | Challenging (+0) Intimidate or Charm                                      | +5 to many tests; aid 1 additional action per 3 DoS                                                                                                                        |
 | Triage                     | Difficult (-10) Medicae                                                   | Reduce previous turn's Crew Population damage by 1 + 1 per DoS; minimum 1 damage; only affects previous turn                                                               |
+## Astropath Actions
+
+only at **Unfettered** or **Push** level.
+
+| Action             | Requirement                            | Test                          | Effect                                                                                     |
+| ------------------ | -------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------ |
+| The Ties That Bind | Mind Link                              | Hard (-20) Willpower          | All Explorers aboard gain +5 to one action each during the next Strategic Round            |
+| Telepathic Jamming | —                                      | Opposed Psyniscience          | Creates 1 VU radius of astropathic interference per DoS                                    |
+| Divining the Way   | Divination Discipline; once per combat | Hard (-20) Psyniscience       | Add 1d5 DoS to the ship's next Manoeuvre Action                                            |
+| Taking the Shot    | Divination Discipline; once per combat | Very Hard (-30) Psyniscience  | Grant +10 to one Shooting Action per DoS                                                   |
+| Inspiring Presence | Inspire                                | Challenging (+0) Psyniscience | Grant +10 per DoS to either the Pilot (Space Craft) or Command Test for Hit and Run Action |
+
+## Navigator Actions
+
+| Action               | Requirement                     | Test                                 | Effect                                                          |
+| -------------------- | ------------------------------- | ------------------------------------ | --------------------------------------------------------------- |
+| Tactical Positioning |                                 | Difficult (-10) Psyniscience         | Add 1 DoS to one BS Test, **or** to one Evasive Manoeuvres Test |
+| Tactical Retreat     | Ship is escaping during a Chase | Difficult (-10) Navigation (Stellar) | Reduce DoS required to escape by 1 per 2 DoS                    |
+| Relentless Pursuit   | Ship is pursuing during a Chase | Difficult (-10) Navigation (Stellar) | Reduce total DoS required to catch fleeing ship by 1 per DoS    |
