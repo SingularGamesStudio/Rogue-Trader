@@ -314,12 +314,6 @@
 
       const data = await response.json()
 
-      const visibleLayers = new Set(
-        (data.layers ?? [])
-          .filter((layer) => layer.visible !== false)
-          .map((layer) => layer.id),
-      )
-
       const imagePathFromData =
         data.activeBase ??
         data.bases?.[0]?.path ??
@@ -333,12 +327,21 @@
       scene.appendChild(image)
 
       for (const marker of data.markers ?? []) {
-        if (marker.type && marker.type !== "pin") continue
-        if (!Number.isFinite(Number(marker.x))) continue
-        if (!Number.isFinite(Number(marker.y))) continue
-        if (visibleLayers.size && !visibleLayers.has(marker.layer)) continue
+        const x = Number(marker.x)
+        const y = Number(marker.y)
 
-        scene.appendChild(makeMarker(marker))
+        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+          console.warn("Zoom map: skipped marker with invalid coordinates", marker)
+          continue
+        }
+
+        console.log("Zoom map: rendering marker", marker)
+
+        scene.appendChild(makeMarker({
+          ...marker,
+          x,
+          y,
+        }))
       }
 
       image.addEventListener("load", () => {

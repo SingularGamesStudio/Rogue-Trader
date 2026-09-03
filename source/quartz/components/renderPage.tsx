@@ -106,7 +106,7 @@ export function pageResources(
     contentType: "external",
   })
   resources.js.push({
-      src: "static/zoom-map.js",
+      src: "/Rogue-Trader/static/zoom-map.js",
       loadTime: "afterDOMReady",
       contentType: "external",
       spaPreserve: true,
