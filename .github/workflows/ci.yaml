@@ -30,6 +30,22 @@ jobs:
           cache: npm
           cache-dependency-path: source/package-lock.json
 
+      - name: Cache npm packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('source/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Cache Quartz plugins
+        uses: actions/cache@v5
+        with:
+          path: source/.quartz/plugins
+          key: ${{ runner.os }}-quartz-plugins-${{ hashFiles('source/quartz.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-quartz-plugins-
+
       - name: Install dependencies
         working-directory: source
         run: npm ci

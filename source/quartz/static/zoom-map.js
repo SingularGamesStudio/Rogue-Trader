@@ -116,7 +116,7 @@
 }
 
   function quartzNoteUrl(value) {
-    let link = String(value ?? "")
+    const link = String(value ?? "")
       .trim()
       .replace(/^\[\[/, "")
       .replace(/\]\]$/, "")
@@ -134,11 +134,19 @@
       .map((part) =>
         part
           .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
+          .trim()
+          .replace(/\s+/g, "-")
+          .replace(/[^\p{L}\p{N}-]+/gu, "-")
+          .replace(/-+/g, "-")
           .replace(/^-+|-+$/g, ""),
       )
       .filter(Boolean)
       .join("/")
+
+    if (!slug) {
+      console.warn("Zoom map: cannot create a route from marker link:", link)
+      return null
+    }
 
     return `${basePath}/${slug}`.replace(/\/+/g, "/")
   }
@@ -292,6 +300,9 @@
     const pre = code.closest("pre")
     if (!pre) return
 
+    if (pre.dataset.zoomMapLoaded === "true") return
+    pre.dataset.zoomMapLoaded = "true"
+
     const source = code.textContent
     const height = readValue(source, "height") || "480px"
     const minZoom = Number.parseFloat(readValue(source, "minZoom") || "0.05")
@@ -361,6 +372,7 @@
       message.textContent =
         `Zoom map failed to load marker JSON:\n${assetUrl(markerPath)}`
 
+      pre.dataset.zoomMapLoaded = "false"
       pre.replaceWith(message)
     }
   }
@@ -375,11 +387,24 @@
 
       if (!imagePath || !markerPath) return
 
-      code.dataset.zoomMapLoaded = "true"
       renderMap(code, imagePath, markerPath)
     })
   }
 
-  document.addEventListener("nav", initializeZoomMaps)
-  initializeZoomMaps()
+  function scheduleZoomMapInitialization() {
+    initializeZoomMaps()
+
+    requestAnimationFrame(() => {
+      initializeZoomMaps()
+
+      requestAnimationFrame(() => {
+        initializeZoomMaps()
+      })
+    })
+  }
+
+  document.addEventListener("nav", scheduleZoomMapInitialization)
+  document.addEventListener("render", scheduleZoomMapInitialization)
+
+  scheduleZoomMapInitialization()
 })()
