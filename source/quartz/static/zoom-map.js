@@ -3,9 +3,17 @@
 
   const styleId = "zoom-map-styles"
 
-  if (!document.getElementById(styleId)) {
+  function ensureZoomMapStyles() {
+    if (document.getElementById(styleId)) {
+      return
+    }
+
     const style = document.createElement("style")
     style.id = styleId
+
+    // Tell Quartz SPA navigation not to remove this stylesheet.
+    style.setAttribute("spa-preserve", "true")
+
     style.textContent = `
       .zoom-map {
         position: relative;
@@ -90,6 +98,7 @@
     `
     document.head.appendChild(style)
   }
+  ensureZoomMapStyles()
 
   function isExternalUrl(value) {
     return /^(https?:)?\/\//i.test(value)
@@ -217,15 +226,99 @@
     let scale = 1
     let translateX = 0
     let translateY = 0
-    let dragging = false
-    let pointerStartX = 0
-    let pointerStartY = 0
-    let startTranslateX = 0
-    let startTranslateY = 0
+
+    // pointerId -> { x, y }, in viewport/client coordinates.
+    const pointers = new Map()
+
+    let gestureMode = null // null | "pan" | "pinch"
+    let panPointerId = null
+    let panStartX = 0
+    let panStartY = 0
+    let panStartTranslateX = 0
+    let panStartTranslateY = 0
+
+    let pinchStartDistance = 0
+    let pinchStartScale = 1
+    let pinchStartCenterX = 0
+    let pinchStartCenterY = 0
+    let pinchStartTranslateX = 0
+    let pinchStartTranslateY = 0
+
+    // Prevent a marker link from opening after the user has actually dragged.
+    let didMove = false
+    let suppressClickUntil = 0
+
+    const DRAG_THRESHOLD_PX = 6
+
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
 
     const apply = () => {
       scene.style.transform =
         `translate(${translateX}px, ${translateY}px) scale(${scale})`
+    }
+
+    const getMapPoint = (clientX, clientY) => {
+      const bounds = map.getBoundingClientRect()
+
+      return {
+        x: clientX - bounds.left,
+        y: clientY - bounds.top,
+      }
+    }
+
+    const getTwoPointers = () => {
+      const [first, second] = [...pointers.values()]
+      return [first, second]
+    }
+
+    const getPinchGeometry = () => {
+      const [a, b] = getTwoPointers()
+
+      const center = {
+        x: (a.x + b.x) * 0.5,
+        y: (a.y + b.y) * 0.5,
+      }
+
+      return {
+        center,
+        distance: Math.hypot(b.x - a.x, b.y - a.y),
+      }
+    }
+
+    const beginPan = () => {
+      if (pointers.size !== 1) return
+
+      const [pointerId, point] = [...pointers.entries()][0]
+
+      gestureMode = "pan"
+      panPointerId = pointerId
+      panStartX = point.x
+      panStartY = point.y
+      panStartTranslateX = translateX
+      panStartTranslateY = translateY
+    }
+
+    const beginPinch = () => {
+      if (pointers.size < 2) return
+
+      const { center, distance } = getPinchGeometry()
+
+      gestureMode = "pinch"
+      pinchStartDistance = Math.max(distance, 1)
+      pinchStartScale = scale
+      pinchStartCenterX = center.x
+      pinchStartCenterY = center.y
+      pinchStartTranslateX = translateX
+      pinchStartTranslateY = translateY
+    }
+
+    const zoomAt = (mapX, mapY, nextScale) => {
+      const clampedScale = clamp(nextScale, minZoom, maxZoom)
+      const ratio = clampedScale / scale
+
+      translateX = mapX - (mapX - translateX) * ratio
+      translateY = mapY - (mapY - translateY) * ratio
+      scale = clampedScale
     }
 
     map.addEventListener(
@@ -233,63 +326,141 @@
       (event) => {
         event.preventDefault()
 
-        const bounds = map.getBoundingClientRect()
-        const mouseX = event.clientX - bounds.left
-        const mouseY = event.clientY - bounds.top
+        const point = getMapPoint(event.clientX, event.clientY)
         const multiplier = event.deltaY < 0 ? 1.15 : 1 / 1.15
-        const nextScale = Math.min(
-          maxZoom,
-          Math.max(minZoom, scale * multiplier),
-        )
 
-        const ratio = nextScale / scale
-        translateX = mouseX - (mouseX - translateX) * ratio
-        translateY = mouseY - (mouseY - translateY) * ratio
-        scale = nextScale
+        zoomAt(point.x, point.y, scale * multiplier)
         apply()
       },
       { passive: false },
     )
 
     map.addEventListener("pointerdown", (event) => {
+      // Preserve ordinary marker taps/clicks. A drag beginning on blank map
+      // space controls the camera.
       if (event.target.closest(".zoom-map-pin")) return
 
-      dragging = true
-      pointerStartX = event.clientX
-      pointerStartY = event.clientY
-      startTranslateX = translateX
-      startTranslateY = translateY
+      const point = getMapPoint(event.clientX, event.clientY)
+      pointers.set(event.pointerId, point)
 
-      map.classList.add("is-dragging")
+      didMove = false
+
+      // Capture means the map continues receiving moves/up events even if a
+      // finger leaves the visible map bounds.
       map.setPointerCapture(event.pointerId)
+
+      if (pointers.size === 1) {
+        beginPan()
+        map.classList.add("is-dragging")
+      } else if (pointers.size === 2) {
+        beginPinch()
+        map.classList.add("is-dragging")
+      }
     })
 
     map.addEventListener("pointermove", (event) => {
-      if (!dragging) return
+      if (!pointers.has(event.pointerId)) return
 
-      translateX = startTranslateX + event.clientX - pointerStartX
-      translateY = startTranslateY + event.clientY - pointerStartY
-      apply()
+      const point = getMapPoint(event.clientX, event.clientY)
+      pointers.set(event.pointerId, point)
+
+      if (gestureMode === "pan" && event.pointerId === panPointerId) {
+        const dx = point.x - panStartX
+        const dy = point.y - panStartY
+
+        if (Math.hypot(dx, dy) >= DRAG_THRESHOLD_PX) {
+          didMove = true
+        }
+
+        translateX = panStartTranslateX + dx
+        translateY = panStartTranslateY + dy
+        apply()
+        return
+      }
+
+      if (gestureMode === "pinch" && pointers.size >= 2) {
+        const { center, distance } = getPinchGeometry()
+
+        const nextScale = clamp(
+          pinchStartScale * (distance / pinchStartDistance),
+          minZoom,
+          maxZoom,
+        )
+
+        // The midpoint both pans the map and provides the zoom focal point.
+        // This keeps the content below the fingers visually stable.
+        const ratio = nextScale / pinchStartScale
+
+        translateX =
+          center.x -
+          (pinchStartCenterX - pinchStartTranslateX) * ratio
+
+        translateY =
+          center.y -
+          (pinchStartCenterY - pinchStartTranslateY) * ratio
+
+        scale = nextScale
+
+        if (
+          Math.hypot(
+            center.x - pinchStartCenterX,
+            center.y - pinchStartCenterY,
+          ) >= DRAG_THRESHOLD_PX ||
+          Math.abs(distance - pinchStartDistance) >= DRAG_THRESHOLD_PX
+        ) {
+          didMove = true
+        }
+
+        apply()
+      }
     })
 
-    const stopDragging = () => {
-      dragging = false
-      map.classList.remove("is-dragging")
+    const stopPointer = (event) => {
+      if (!pointers.has(event.pointerId)) return
+
+      pointers.delete(event.pointerId)
+
+      if (map.hasPointerCapture?.(event.pointerId)) {
+        map.releasePointerCapture(event.pointerId)
+      }
+
+      if (didMove) {
+        suppressClickUntil = performance.now() + 250
+      }
+
+      if (pointers.size === 1) {
+        // After lifting one finger from a pinch, continue naturally as a
+        // single-finger pan from the remaining finger's current position.
+        beginPan()
+        return
+      }
+
+      if (pointers.size === 0) {
+        gestureMode = null
+        panPointerId = null
+        map.classList.remove("is-dragging")
+      }
     }
 
-    map.addEventListener("pointerup", stopDragging)
-    map.addEventListener("pointercancel", stopDragging)
+    map.addEventListener("pointerup", stopPointer)
+    map.addEventListener("pointercancel", stopPointer)
+    map.addEventListener("lostpointercapture", stopPointer)
+
+    map.addEventListener(
+      "click",
+      (event) => {
+        if (performance.now() < suppressClickUntil) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+      },
+      true,
+    )
 
     map.addEventListener("dblclick", (event) => {
-      const bounds = map.getBoundingClientRect()
-      const mouseX = event.clientX - bounds.left
-      const mouseY = event.clientY - bounds.top
-      const nextScale = Math.min(maxZoom, scale * 1.5)
-      const ratio = nextScale / scale
+      const point = getMapPoint(event.clientX, event.clientY)
 
-      translateX = mouseX - (mouseX - translateX) * ratio
-      translateY = mouseY - (mouseY - translateY) * ratio
-      scale = nextScale
+      zoomAt(point.x, point.y, scale * 1.5)
       apply()
     })
 
@@ -378,6 +549,7 @@
   }
 
   function initializeZoomMaps() {
+    ensureZoomMapStyles()
     document.querySelectorAll("pre code").forEach((code) => {
       if (code.dataset.zoomMapLoaded === "true") return
 
