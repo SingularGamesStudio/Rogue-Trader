@@ -51,7 +51,11 @@
         width: 24px;
         height: 24px;
         box-sizing: border-box;
-        transform: translate(-50%, -100%) rotate(-45deg);
+        transform:
+          translate(-50%, -100%)
+          rotate(-45deg)
+          scale(var(--zoom-map-pin-scale, 1));
+        transform-origin: 50% 100%;
         border: 2px solid #fff;
         border-radius: 50% 50% 50% 0;
         background: #d63636;
@@ -260,8 +264,17 @@
     }
 
     const apply = () => {
+      const effectiveScale = fitScale * scale
+
       scene.style.transform =
-        `translate(${translateX}px, ${translateY}px) scale(${fitScale * scale})`
+        `translate(${translateX}px, ${translateY}px) scale(${effectiveScale})`
+
+      // Scene scaling shrinks/grows every child. Inverse-scale pins so their
+      // apparent size stays 24px regardless of image resolution or map zoom.
+      scene.style.setProperty(
+        "--zoom-map-pin-scale",
+        String(1 / Math.max(effectiveScale, 0.0001)),
+      )
     }
 
     const getMapPoint = (clientX, clientY) => {
@@ -503,6 +516,8 @@
     scene.className = "zoom-map-scene"
     map.appendChild(scene)
 
+    pre.replaceWith(map)
+
     try {
       const response = await fetch(assetUrl(markerPath))
 
@@ -525,12 +540,22 @@
       image.addEventListener(
         "load",
         () => {
-          // The scene now has the map's real coordinate space rather than
-          // the narrow visible viewport's coordinate space.
+          // Keep the scene in original image coordinates so transformed zoom
+          // samples from a large source layout rather than a viewport-sized image.
           scene.style.width = `${image.naturalWidth}px`
           scene.style.height = `${image.naturalHeight}px`
 
-          enablePanAndZoom(map, scene, minZoom, maxZoom)
+          const startMap = () => {
+            // The map must be attached and measurable before calculating fitScale.
+            if (!map.isConnected || map.clientWidth === 0 || map.clientHeight === 0) {
+              requestAnimationFrame(startMap)
+              return
+            }
+
+            enablePanAndZoom(map, scene, minZoom, maxZoom)
+          }
+
+          requestAnimationFrame(startMap)
         },
         { once: true },
       )
@@ -563,8 +588,6 @@
           y,
         }))
       }
-
-      pre.replaceWith(map)
     } catch (error) {
       console.error("Zoom map failed:", error)
 
