@@ -33,7 +33,6 @@
       .zoom-map-scene {
         position: absolute;
         inset: 0 auto auto 0;
-        width: 100%;
         transform-origin: top left;
         will-change: transform;
       }
@@ -145,7 +144,7 @@
           .toLowerCase()
           .trim()
           .replace(/\s+/g, "-")
-          .replace(/[^\p{L}\p{N}-]+/gu, "-")
+          .replace(/[^\p{L}\p{N}'-]+/gu, "-")
           .replace(/-+/g, "-")
           .replace(/^-+|-+$/g, ""),
       )
@@ -252,9 +251,17 @@
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
 
+    const updateFitScale = () => {
+      const sceneWidth = scene.offsetWidth
+
+      if (sceneWidth > 0) {
+        fitScale = map.clientWidth / sceneWidth
+      }
+    }
+
     const apply = () => {
       scene.style.transform =
-        `translate(${translateX}px, ${translateY}px) scale(${scale})`
+        `translate(${translateX}px, ${translateY}px) scale(${fitScale * scale})`
     }
 
     const getMapPoint = (clientX, clientY) => {
@@ -330,6 +337,15 @@
         const multiplier = event.deltaY < 0 ? 1.15 : 1 / 1.15
 
         zoomAt(point.x, point.y, scale * multiplier)
+        updateFitScale()
+
+        const resizeObserver = new ResizeObserver(() => {
+          updateFitScale()
+          apply()
+        })
+
+        resizeObserver.observe(map)
+
         apply()
       },
       { passive: false },
@@ -503,9 +519,31 @@
 
       const image = document.createElement("img")
       image.className = "zoom-map-image"
-      image.src = assetUrl(imagePathFromData)
       image.alt = ""
       image.draggable = false
+
+      image.addEventListener(
+        "load",
+        () => {
+          // The scene now has the map's real coordinate space rather than
+          // the narrow visible viewport's coordinate space.
+          scene.style.width = `${image.naturalWidth}px`
+          scene.style.height = `${image.naturalHeight}px`
+
+          enablePanAndZoom(map, scene, minZoom, maxZoom)
+        },
+        { once: true },
+      )
+
+      image.addEventListener(
+        "error",
+        () => {
+          console.error("Zoom map image failed to load:", image.src)
+        },
+        { once: true },
+      )
+
+      image.src = assetUrl(imagePathFromData)
       scene.appendChild(image)
 
       for (const marker of data.markers ?? []) {
@@ -525,14 +563,6 @@
           y,
         }))
       }
-
-      image.addEventListener("load", () => {
-        enablePanAndZoom(map, scene, minZoom, maxZoom)
-      })
-
-      image.addEventListener("error", () => {
-        console.error("Zoom map image failed to load:", image.src)
-      })
 
       pre.replaceWith(map)
     } catch (error) {

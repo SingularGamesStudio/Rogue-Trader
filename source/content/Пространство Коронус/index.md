@@ -5,7 +5,7 @@ title: Карта пространства Коронус
 
 ```zoommap
 imageBases:
-  - path: img/Koronus.jpg
+  - path: img/Koronus.webp
 markers: img/Koronus.markers.json
 markerLayers:
   - Default

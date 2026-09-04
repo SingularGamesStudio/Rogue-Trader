@@ -95,11 +95,11 @@
   ],
   "bases": [
     {
-      "path": "img/Koronus.jpg"
+      "path": "img/Koronus.webp"
     }
   ],
   "overlays": [],
-  "activeBase": "img/Koronus.jpg",
+  "activeBase": "img/Koronus.webp",
   "measurement": {
     "scales": {},
     "customUnitPxPerUnit": {},
