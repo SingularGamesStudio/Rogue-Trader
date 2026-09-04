@@ -354,24 +354,6 @@
         const multiplier = event.deltaY < 0 ? 1.15 : 1 / 1.15
 
         zoomAt(point.x, point.y, scale * multiplier)
-        if (!updateFitScale()) {
-          console.error("Zoom map: invalid initial dimensions", {
-            mapWidth: map.clientWidth,
-            sceneWidth: scene.offsetWidth,
-          })
-          return
-        }
-
-        console.log("Zoom map initialized", {
-          mapWidth: map.clientWidth,
-          mapHeight: map.clientHeight,
-          sceneWidth: scene.offsetWidth,
-          sceneHeight: scene.offsetHeight,
-          fitScale,
-          userScale: scale,
-          effectiveScale: fitScale * scale,
-        })
-
         apply()
       },
       { passive: false },
@@ -505,6 +487,14 @@
       zoomAt(point.x, point.y, scale * 1.5)
       apply()
     })
+
+    if (!updateFitScale()) {
+      console.error("Zoom map: invalid initial dimensions", {
+        mapWidth: map.clientWidth,
+        sceneWidth: scene.offsetWidth,
+      })
+      return
+    }
 
     apply()
   }
