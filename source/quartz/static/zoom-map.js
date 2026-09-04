@@ -256,11 +256,15 @@
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
 
     const updateFitScale = () => {
+      const mapWidth = map.clientWidth
       const sceneWidth = scene.offsetWidth
 
-      if (sceneWidth > 0) {
-        fitScale = map.clientWidth / sceneWidth
+      if (mapWidth <= 0 || sceneWidth <= 0) {
+        return false
       }
+
+      fitScale = mapWidth / sceneWidth
+      return true
     }
 
     const apply = () => {
@@ -350,14 +354,23 @@
         const multiplier = event.deltaY < 0 ? 1.15 : 1 / 1.15
 
         zoomAt(point.x, point.y, scale * multiplier)
-        updateFitScale()
+        if (!updateFitScale()) {
+          console.error("Zoom map: invalid initial dimensions", {
+            mapWidth: map.clientWidth,
+            sceneWidth: scene.offsetWidth,
+          })
+          return
+        }
 
-        const resizeObserver = new ResizeObserver(() => {
-          updateFitScale()
-          apply()
+        console.log("Zoom map initialized", {
+          mapWidth: map.clientWidth,
+          mapHeight: map.clientHeight,
+          sceneWidth: scene.offsetWidth,
+          sceneHeight: scene.offsetHeight,
+          fitScale,
+          userScale: scale,
+          effectiveScale: fitScale * scale,
         })
-
-        resizeObserver.observe(map)
 
         apply()
       },
@@ -540,22 +553,49 @@
       image.addEventListener(
         "load",
         () => {
-          // Keep the scene in original image coordinates so transformed zoom
-          // samples from a large source layout rather than a viewport-sized image.
+          // Native image coordinate space: marker percentages now refer to the
+          // original image dimensions, not to the visible map width.
           scene.style.width = `${image.naturalWidth}px`
           scene.style.height = `${image.naturalHeight}px`
 
-          const startMap = () => {
-            // The map must be attached and measurable before calculating fitScale.
-            if (!map.isConnected || map.clientWidth === 0 || map.clientHeight === 0) {
-              requestAnimationFrame(startMap)
+          let attempts = 0
+          const maxAttempts = 60
+
+          const startWhenMeasurable = () => {
+            const mapWidth = map.clientWidth
+            const mapHeight = map.clientHeight
+            const sceneWidth = scene.offsetWidth
+            const sceneHeight = scene.offsetHeight
+
+            // Wait for Quartz/CSS/layout to produce actual dimensions.
+            if (
+              mapWidth <= 0 ||
+              mapHeight <= 0 ||
+              sceneWidth <= 0 ||
+              sceneHeight <= 0
+            ) {
+              attempts += 1
+
+              if (attempts < maxAttempts) {
+                requestAnimationFrame(startWhenMeasurable)
+              } else {
+                console.error("Zoom map: map never acquired measurable dimensions", {
+                  mapWidth,
+                  mapHeight,
+                  sceneWidth,
+                  sceneHeight,
+                  imageNaturalWidth: image.naturalWidth,
+                  imageNaturalHeight: image.naturalHeight,
+                })
+              }
+
               return
             }
 
             enablePanAndZoom(map, scene, minZoom, maxZoom)
           }
 
-          requestAnimationFrame(startMap)
+          requestAnimationFrame(startWhenMeasurable)
         },
         { once: true },
       )
