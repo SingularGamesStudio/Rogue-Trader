@@ -68,5 +68,4 @@ title: Корабль без названия
 * Haunted: -10 morale, +6 Detection, -5 Command on Boarding Action <br>
 * Backstabba in the walls: -5 Morale <br>
 * Eldar Gun Crew: +5 Ballistic Skill (only Eldar weapons), -2 Morale <br>
-* Huge Yu'vath ruin on board: -2 Manoeuvrability
 </details>
