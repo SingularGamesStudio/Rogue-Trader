@@ -1,0 +1,9 @@
+{
+  "id": "sigil-preview",
+  "name": "Sigil Preview",
+  "version": "1.0.2",
+  "minAppVersion": "1.0.0",
+  "description": "Renders {{sigil ...}} notation as configurable pentagonal SVG sigils in Reading view.",
+  "author": "Local",
+  "isDesktopOnly": false
+}

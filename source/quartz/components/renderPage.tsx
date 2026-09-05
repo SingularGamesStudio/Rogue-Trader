@@ -106,6 +106,12 @@ export function pageResources(
     contentType: "external",
   })
   resources.js.push({
+      src: "/Rogue-Trader/static/sigil-renderer.js",
+      loadTime: "afterDOMReady",
+      contentType: "external",
+      spaPreserve: true,
+    })
+  resources.js.push({
       src: "/Rogue-Trader/static/zoom-map.js",
       loadTime: "afterDOMReady",
       contentType: "external",
