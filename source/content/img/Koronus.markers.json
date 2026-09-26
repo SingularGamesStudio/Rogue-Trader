@@ -91,6 +91,16 @@
       "link": "Пространство Коронус/Футфолл",
       "iconKey": "pinRed",
       "tooltip": ""
+    },
+    {
+      "type": "pin",
+      "id": "marker_iuorcf",
+      "x": 0.6890566811959886,
+      "y": 0.1349722389935853,
+      "layer": "default",
+      "link": "Пространство Коронус/Бюрнскор",
+      "iconKey": "pinRed",
+      "tooltip": ""
     }
   ],
   "bases": [
