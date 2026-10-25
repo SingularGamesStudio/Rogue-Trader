@@ -31,6 +31,7 @@ title: Корабль без названия
 | Pulsar Lance                        |      1-3 |  1d10+3 |                         3 |     3 | prow            |
 | Ram                                 |        - | 3d10+24 |                         - |     1 | prow            |
 | Torpedo Launcher                    |     4/32 |       - |                         - |     - | not installed   |
+| Свободный слот                      |          |         |                           |       |                 |
 
 | Torpedoes                   | Speed | Damage  | Crit | Range | Reroll | Guidance    |
 | --------------------------- | ----- | ------- | ---- | ----- | ------ | ----------- |
