@@ -24,7 +24,7 @@ title: Корабль без названия
 | Morale          |   <input type="text" value="84" size="4"> |   84 |
 
 ## Weapons
-| Weapon                              | Strength |  Damage | Crit ([[Voidship crits]]) | Range | Location        |
+| Weapon                              | Strength |  Damage | Crit ([[Vehicle crits]]) | Range | Location        |
 | ----------------------------------- | -------: | ------: | ------------------------: | ----: | --------------- |
 | Starcannon Cluster Battery (+10 BS) |        4 |  1d10+2 |                         4 |     4 | port, starboard |
 | Mezoa-pattern Macrobattery          |        4 |  1d10+3 |          5 (always Fire!) |     5 | port, starboard |

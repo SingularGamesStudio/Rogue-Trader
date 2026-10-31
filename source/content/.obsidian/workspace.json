@@ -25,12 +25,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Правила/Void combat actions.md",
+                "file": "Правила/Vehicle crits.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Void combat actions"
+              "title": "Vehicle crits"
             }
           }
         ],
@@ -202,11 +202,14 @@
   },
   "active": "7e1c1e46cba82162",
   "lastOpenFiles": [
+    "Правила/Void combat actions.md",
+    "Правила/index.md",
+    "Правила/Actions.md",
+    "Правила/Vehicle crits.md",
     "Пати/Корабль/index.md",
     "Пространство Коронус/Бюрнскор.md",
     "Пространство Коронус/Футфолл.md",
     "Пространство Коронус/Глубины Каина.md",
-    "Правила/Actions.md",
     "Пати/Ясос Биба.md",
     "Пати/Корнелий.md",
     "Пати/Дональд.md",
@@ -226,9 +229,6 @@
     "NPC/Дома вольных торговцев/Нинос Диджи.md",
     "NPC/Дома вольных торговцев/Мордеркай Винтерскейл.md",
     "NPC/Футфолл/Калкус Калинникус.md",
-    "NPC/Футфолл/Вассал Тантус Моросс.md",
-    "NPC/Футфолл/Вассал Владайм Токара.md",
-    "NPC/Дома вольных торговцев/Керган Слей.md",
     "img/aOeSoNDC1M_12hiESPXt9jjN0rc4NGnNQLEoZQxXlAwbYRCslDTo3MVPbP53qtf8Q-1usIBwL2oqAZC5AfzgrT1Q.jpg",
     "img/71f697965780b08ead8aaec14e8332b0.jpg",
     "NPC/Дома вольных торговцев",

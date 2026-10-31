@@ -11,7 +11,7 @@
 [Crits - Explosive](https://apps.ajott.io/quickref/crit.html#explosiveCrit)
 [Crits - Impact](https://apps.ajott.io/quickref/crit.html#impactCrit)
 [Crits - Rending](https://apps.ajott.io/quickref/crit.html#rendingCrit)
-[[Voidship crits]]
+[[Vehicle crits]]
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
