@@ -28,10 +28,9 @@ title: Корабль без названия
 | ----------------------------------- | -------: | ------: | ------------------------: | ----: | --------------- |
 | Starcannon Cluster Battery (+10 BS) |        4 |  1d10+2 |                         4 |     4 | port, starboard |
 | Mezoa-pattern Macrobattery          |        4 |  1d10+3 |          5 (always Fire!) |     5 | port, starboard |
-| Pulsar Lance                        |      1-3 |  1d10+3 |                         3 |     3 | prow            |
+| Pulsar Lance                        |      1-3 |  1d10+3 |                         3 |     3 | keel            |
 | Ram                                 |        - | 3d10+24 |                         - |     1 | prow            |
-| Torpedo Launcher                    |     4/32 |       - |                         - |     - | not installed   |
-| Свободный слот                      |          |         |                           |       |                 |
+| Torpedo Launcher                    |     4/32 |       - |                         - |     - | prow            |
 
 | Torpedoes                   | Speed | Damage  | Crit | Range | Reroll | Guidance    |
 | --------------------------- | ----- | ------- | ---- | ----- | ------ | ----------- |
